@@ -1,43 +1,131 @@
-//
-// Created by sakost on 17.09.2020.
-//
+#pragma once
 
-#ifndef LAB1_VECTOR_H
-#define LAB1_VECTOR_H
+#include <stdexcept>
+#include <cstring>
 
-#include <cstdlib>
 
 namespace NVector {
+    const int DEFAULT_CAPACITY_MULTIPLIER = 2;
+
     template<typename T>
     class TVector {
     public:
-        [[maybe_unused]] TVector();
+        TVector(): Len(0) {
+            Capacity = DEFAULT_CAPACITY_MULTIPLIER;
+            Arr = new T[Capacity];
+        }
 
-        [[maybe_unused]] explicit TVector(size_t n);
+        explicit TVector(size_t newSize, const T &defaultValue = T()) : TVector() {
+            Len = newSize;
+            if(Len == 0){
+                Capacity = DEFAULT_CAPACITY_MULTIPLIER;
+            } else {
+                Capacity = newSize * DEFAULT_CAPACITY_MULTIPLIER;
+            }
+            delete []Arr;
+            Arr = new T[Capacity];
 
-        [[maybe_unused]] TVector(const TVector<T> &other);
+            for (size_t i = 0; i < Len; ++i) {
+                Arr[i] = defaultValue;
+            }
+        }
 
-        ~TVector();
+        [[nodiscard]] size_t Size() const {
+            return Len;
+        }
 
-        [[maybe_unused]] void Clear();
+        [[nodiscard]] bool Empty() const {
+            return Size() == 0;
+        }
 
-        [[maybe_unused]] void PushBack(T element);
+        [[maybe_unused]] T *Begin() const {
+            return Arr;
+        }
 
-        [[maybe_unused]] void PopBack();
+        [[maybe_unused]] T *End() const {
+            if (Arr) {
+                return Arr + Len;
+            }
+            return nullptr;
+        }
 
-        [[maybe_unused]] T Back() const;
 
-        [[maybe_unused]] [[nodiscard]] size_t Size() const;
+        TVector(const TVector &other) : TVector(other.Size()) {
+            if (other.Arr) {
+                std::memcpy(Arr, other.Arr, sizeof(T) * Len);
+            }
+        }
 
-        [[maybe_unused]] T &operator[](size_t n);
+        TVector &operator=(const TVector &other) {
+            Clear();
 
-        [[maybe_unused]] T &At(size_t n);
+            this->Len = other.Len;
+            this->Capacity = other.Capacity;
+
+            Arr = new T[this->Capacity];
+
+            std::memcpy(Arr, other.Arr, sizeof(T) * Len);
+
+            return *this;
+        }
+
+        ~TVector() {
+            Clear();
+        }
+
+        void Clear(){
+            delete[] Arr;
+
+            Capacity = 0;
+            Len = 0;
+            Arr = nullptr;
+        }
+
+        [[maybe_unused]] void PushBack(T &element) {
+            if (Len++ == Capacity) {
+                Capacity = DEFAULT_CAPACITY_MULTIPLIER * Capacity;
+                T *newArr = new T[Capacity];
+                std::memcpy(newArr, Arr, (Capacity / DEFAULT_CAPACITY_MULTIPLIER) * sizeof(T));
+                delete []Arr;
+                Arr = newArr;
+            }
+            Arr[Len - 1] = element;
+        }
+
+        void PushBack(const T &&element){
+            if (Len++ == Capacity) {
+                Capacity = DEFAULT_CAPACITY_MULTIPLIER * Capacity;
+                T *newArr = new T[Capacity];
+                std::memcpy(newArr, Arr, (Capacity / DEFAULT_CAPACITY_MULTIPLIER) * sizeof(T));
+                delete []Arr;
+                Arr = newArr;
+            }
+            Arr[Len - 1] = element;
+        }
+
+        const T &At(size_t index) const {
+//            if (index < 0 || index >= Len) {
+//                throw std::out_of_range("Index is out of range");
+//            }
+            return Arr[index];
+        }
+
+        T &At(size_t index) {
+            const T &elem = const_cast<const TVector *>(this)->At(index);
+            return const_cast<T &>(elem);
+        }
+
+        const T &operator[](size_t index) const {
+            return At(index);
+        }
+
+        T &operator[](size_t index) {
+            return At(index);
+        }
 
     private:
+        size_t Len{};
+        size_t Capacity{};
         T *Arr;
-        size_t Capacity{}, Len{};
     };
-
-} // namespace NVector
-
-#endif //LAB1_VECTOR_H
+}

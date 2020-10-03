@@ -11,9 +11,36 @@ namespace NPair {
     template<typename F, typename S>
     class TPair {
     public:
-        TPair(F first, S second);
+        TPair(){
+            First = 0;
+            Second = 0;
+        }
 
-        bool operator<(const TPair &other);
+        TPair(F first, S second){
+            this->First = first;
+            this->Second = second;
+        }
+
+        TPair(const TPair &other){
+            First = other.First;
+            Second = other.Second;
+        }
+
+        ~TPair()= default;
+
+        bool operator<(const TPair &other) const{
+            if(First == other.First){
+                return Second < other.Second;
+            }
+            return First < other.First;
+        }
+
+        TPair &operator=(const TPair &other) {
+            First = other.First;
+            Second = other.Second;
+            return *this;
+        }
+
 
         F First;
         S Second;

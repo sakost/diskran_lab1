@@ -3,4 +3,4 @@ project(lab1)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(lab1 main.cpp vector.cpp vector.h pair.cpp pair.h sort.cpp sort.h)
+add_executable(lab1 lab1.cpp vector.h sort.h pair.h)
