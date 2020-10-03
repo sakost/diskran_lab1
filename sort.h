@@ -63,10 +63,10 @@ namespace NSort{
 
         const NPair::TPair<TKey, TValue> minElement = MinElement(vector);
         const NPair::TPair<TKey, TValue> maxElement = MaxElement(vector);
-        const TKey interval = (maxElement.First - minElement.First + 1) / vector.Size();
+        const long double interval = (long double)(maxElement.First - minElement.First + 1) / vector.Size();
 
         for (size_t i = 0; i < vector.Size(); ++i) {
-            TKey i1 = (vector.At(i).First - minElement.First) / interval;
+            TKey i1 = (TKey)((vector.At(i).First - minElement.First) / interval);
             if(i1 == vector.Size()){
                 i1--;
             }
