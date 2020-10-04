@@ -11,6 +11,7 @@
 #include <cstdint>
 #include <chrono>
 #include <algorithm>
+#include <random>
 
 int main() {
     std::ios_base::sync_with_stdio(false);
@@ -39,7 +40,9 @@ int main() {
     dur = finish - start;
     std::cerr << "custom bucket sort " << std::chrono::duration_cast<std::chrono::milliseconds>(dur).count() << " ms" << std::endl;
 
-    std::shuffle(v.Begin(), v.End());
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(v.Begin(), v.End(), g);
 
     start = std::chrono::steady_clock::now();
     std::stable_sort(v.Begin(), v.End());
